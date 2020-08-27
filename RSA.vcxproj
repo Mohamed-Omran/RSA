@@ -142,6 +142,8 @@
     <ClCompile Include="RSA.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="ASCII.txt" />
+    <Text Include="ASCII2.txt" />
     <Text Include="Decryption.txt" />
     <Text Include="Encryption.txt" />
     <Text Include="Text.txt" />

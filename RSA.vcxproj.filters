@@ -29,5 +29,7 @@
     <Text Include="Decryption.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="ASCII.txt" />
+    <Text Include="ASCII2.txt" />
   </ItemGroup>
 </Project>

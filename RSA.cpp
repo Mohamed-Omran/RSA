@@ -3,12 +3,99 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <fstream>
+#include <string>
+
 
 using namespace std;
 
 typedef unsigned long long int lli;
 
 
+lli gcd(lli a, lli b);
+
+lli gcdExtended(lli a, lli b, int* x, int* y);
+
+lli Mod_Mul(lli a, lli b, lli c);
+
+lli Mod_Exp(lli base, lli exponent, lli mod);
+
+bool is_prime(lli p, int iteration);
+
+void To_ASCII(string infile, string outfile);
+
+void From_ASCII(string infile, string outfile);
+
+void RSA_Encryption(string infile, string outfile, lli e, lli n);
+
+void RSA_Decryption(string infile, string outfile, lli e, lli n);
+
+
+int main() {
+
+    srand(time(NULL));
+
+    lli p, q, n, k, e, d;
+    int x, y;
+    int j = 5;  // number of Miller iteration
+    
+    //Generating primes p and q randomly
+    p = rand() % 1000000; // restricting random number to 999999 to prevent memory overflow
+    q = rand() % 1000000;
+
+    if (p % 2 == 0)
+        p++;
+
+    if (q % 2 == 0)
+        q++;
+
+    while (!is_prime(p, j))
+        p += 2;
+    
+    while (!is_prime(q, j))
+        q += 2;
+    
+    
+    
+    //Computing k and n
+    n = p * q;
+    k = (p - 1) * (q - 1);
+    
+    
+    // Generating e
+    do {
+        e = rand() %k;
+    } while (gcd(e,k)!=1);
+
+
+    
+    //computing d using the extende Ecludian algorithm
+    lli temp = gcdExtended(k, e, &x, &y);
+    if (y < 0) {
+        y += k;
+    }
+    d = y;
+
+
+
+    cout<< "first prime number p is: " << p << endl;
+    cout << "second prime number q is: " << q << endl;
+    cout << "n= p * q is: " << n << endl;
+    cout << "k = (p - 1) * (q - 1) is: "<< k << endl;
+    cout << "e is: " << e << endl;
+    //cout << "gcd(k,e)=: " << gcd(k, e) << endl;
+    //cout << x << "  " << y<< endl;
+    //cout << x * k + y * e << endl;
+
+   cout << "d is " << d << endl;
+   //cout << "d*e mod k is: " << (d*e)%k << endl;
+    To_ASCII("Text.txt", "ASCII.txt");
+    RSA_Encryption("ASCII.txt", "Encryption.txt", e, n);
+    RSA_Decryption("Encryption.txt", "ASCII2.txt", d, n);
+    From_ASCII("ASCII2.txt", "Decryption.txt");
+
+}
+///////////////////////////////////////////////////////////////////////////////////////
 // gcd of a and b 
 lli gcd(lli a, lli b)
 {
@@ -40,27 +127,21 @@ lli gcdExtended(lli a, lli b, int* x, int* y)
 }
 
 
-
-lli generate_prime() {
-    lli c = rand() % 1000000;
-    if (c % 2 == 0)
-        c++;
-    return 0;
-}
-
 //Computes (a * b) mod c
 lli Mod_Mul(lli a, lli b, lli c)
 {
-    lli res = 0;
-    a = a % c;
-    while (b > 0)
-    {
-        if (b % 2 == 1)
-            res = (res + a) % c;
-        a = (a * 2) % c;
-        b /= 2;
-    }
-    return res % c;
+
+    return ((a % c) * (b % c)) % c;
+    // lli res = 0;
+    // a = a % c;
+    /* while (b > 0)
+     {
+         if (b % 2 == 1)
+             res = (res + a) % c;
+         a = (a * 2) % c;
+         b /= 2;
+     }
+     return res % c;*/
 }
 
 lli Mod_Exp(lli base, lli exponent, lli mod) {
@@ -116,68 +197,97 @@ bool is_prime(lli p, int iteration)
     }
     return 1;
 }
-int main() {
-    srand(time(NULL));
-
-    lli p, q, n, k, e, d;
-    int x, y;
-    int j = 5;  // number of Miller iteration
-
-    //Generating primes p and q and e randomly
-    do {
-        p = rand() % 1000000; // restricting random number to 999999 to prevent memory overflow
-    } while (!is_prime(p,j));
-
-    do {
-        q = rand() % 1000000;
-    } while (!is_prime(q,j));
-    
-    //Computing k and n
-    n = p * q;
-    k = (p - 1) * (q - 1);
-
-    do {
-        e = rand() %k;
-    } while (gcd(e,k)!=1);
-
-
-    lli temp = gcdExtended(k, e, &x, &y);
-    if (y < 0)
-        y += k;
-    
-    d = y;
 
 
 
+void To_ASCII(string infile, string outfile)
+{
+    ifstream inFile;
+    ofstream outFile;
+    inFile.open(infile);
+    outFile.open(outfile);
+    if (!inFile || !outFile) {
+        cout << "Error opening one of the files" << std::endl;
+        return;
+    }
+    while (!inFile.eof()) {
+        char charchter;
+
+        inFile.get(charchter);
+        int a = charchter;
+        outFile << a;
+        outFile << endl;
+        //cout << a;
+    }
+    std::cout << "To_ASCII finished successfully" << std::endl;
+    inFile.close();
+    outFile.close();
+
+}
+void From_ASCII(string infile, string outfile) {
+    ifstream inFile;
+    ofstream outFile;
+    inFile.open(infile);
+    outFile.open(outfile);
+    if (!inFile || !outFile) {
+        cout << "Error opening one of the files" << std::endl;
+        return;
+    }
+    while (!inFile.eof()) {
+        int a;
+
+        inFile >> a;
+        char charecter = a;
+        outFile << charecter;
+        //outFile << endl;
+         //cout << a;
+    }
+    cout << "From_ASCII finished successfully" << std::endl;
+    inFile.close();
+    outFile.close();
+}
 
 
 
+void RSA_Encryption(string infile, string outfile, lli e, lli n) {
+    ifstream inFile;
+    ofstream outFile;
+    inFile.open(infile);
+    outFile.open(outfile);
 
 
+    while (!inFile.eof()) {
+        lli m;
+
+        inFile >> m;
+        lli c = Mod_Exp(m, e, n);
+        outFile << c;
+        outFile << endl;
+        //cout << a;
+    }
+    std::cout << "Encryption finished successfully" << std::endl;
+    inFile.close();
+    outFile.close();
+}
 
 
+void RSA_Decryption(string infile, string outfile, lli d, lli n) {
+    ifstream inFile;
+    ofstream outFile;
+    inFile.open(infile);
+    outFile.open(outfile);
 
 
+    while (!inFile.eof()) {
+        lli c;
 
-
-
-
-
-    cout<< "first prime number p is: " << p << endl;
-    cout << "second prime number q is: " << q << endl;
-    cout << "n= p * q is: " << n << endl;
-    cout << "k = (p - 1) * (q - 1) is: "<< k << endl;
-    cout << "e is: " << e << endl;
-    cout << "gcd(k,e)=: " << gcd(k, e) << endl;
-    cout << x << "  " << y<< endl;
-    //cout << x * k + y * e << endl;
-    //cout << temp << endl;
-
-   cout << "d is " << d << endl;
-   cout << "d*e mod k is: " << (d*e)%k << endl;
-
-
-    //cout << Mod_Mul(5, 2, 7)<<endl;
-    //cout << Mod_Exp(5, 7, 7) << endl;
-    //cout << is_prime(67,5);
+        inFile >> c;
+        lli m = Mod_Exp(c, d, n);
+        outFile << m;
+        outFile << endl;
+        //cout << a;
+    }
+    std::cout << "Decryption finished successfully" << std::endl;
+    inFile.close();
+    outFile.close();
 }
