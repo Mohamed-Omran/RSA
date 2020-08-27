@@ -146,7 +146,7 @@
     <Text Include="ASCII2.txt" />
     <Text Include="Decryption.txt" />
     <Text Include="Encryption.txt" />
-    <Text Include="Text.txt" />
+    <Text Include="message.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

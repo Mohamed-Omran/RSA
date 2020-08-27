@@ -12,23 +12,23 @@ using namespace std;
 typedef unsigned long long int lli;
 
 
-lli gcd(lli a, lli b);
+lli gcd(lli a, lli b); // computes GCD(a,b)
 
-lli gcdExtended(lli a, lli b, int* x, int* y);
+lli gcdExtended(lli a, lli b, int* x, int* y); // computes GCD(a,b) as a*x + b*y
 
-lli Mod_Mul(lli a, lli b, lli c);
+lli Mod_Mul(lli a, lli b, lli c); // computes (a*b) mod c
 
-lli Mod_Exp(lli base, lli exponent, lli mod);
+lli Mod_Exp(lli base, lli exponent, lli mod); // computes a^b mod c
 
-bool is_prime(lli p, int iteration);
+bool is_prime(lli p, int iteration); // check primality using Miller-Robin test
 
-void To_ASCII(string infile, string outfile);
+void To_ASCII(string infile, string outfile); // converting text to ASCII code
 
-void From_ASCII(string infile, string outfile);
+void From_ASCII(string infile, string outfile); // converting ASCII code to normal text
 
-void RSA_Encryption(string infile, string outfile, lli e, lli n);
+void RSA_Encryption(string infile, string outfile, lli e, lli n); // encrypts a written message into another file
 
-void RSA_Decryption(string infile, string outfile, lli e, lli n);
+void RSA_Decryption(string infile, string outfile, lli d, lli n); // decrypts a written message into another file
 
 
 int main() {
@@ -69,7 +69,7 @@ int main() {
 
 
     
-    //computing d using the extende Ecludian algorithm
+    //computing d using the extended Euclidean algorithm
     lli temp = gcdExtended(k, e, &x, &y);
     if (y < 0) {
         y += k;
@@ -77,28 +77,25 @@ int main() {
     d = y;
 
 
-
-    cout<< "first prime number p is: " << p << endl;
+    cout << "first prime number p is: " << p << endl;
     cout << "second prime number q is: " << q << endl;
     cout << "n= p * q is: " << n << endl;
     cout << "k = (p - 1) * (q - 1) is: "<< k << endl;
     cout << "e is: " << e << endl;
-    //cout << "gcd(k,e)=: " << gcd(k, e) << endl;
-    //cout << x << "  " << y<< endl;
-    //cout << x * k + y * e << endl;
+    cout << "gcd(k,e)=: " << gcd(k, e) << endl;
+    cout << "d is " << d << endl;
+    cout << "d*e mod k is: " << (d*e)%k << endl;
 
-   cout << "d is " << d << endl;
-   //cout << "d*e mod k is: " << (d*e)%k << endl;
-    To_ASCII("Text.txt", "ASCII.txt");
+
+    To_ASCII("message.txt", "ASCII.txt");
     RSA_Encryption("ASCII.txt", "Encryption.txt", e, n);
     RSA_Decryption("Encryption.txt", "ASCII2.txt", d, n);
     From_ASCII("ASCII2.txt", "Decryption.txt");
-
 }
 ///////////////////////////////////////////////////////////////////////////////////////
-// gcd of a and b 
-lli gcd(lli a, lli b)
-{
+
+
+lli gcd(lli a, lli b) {
     if (a == 0)
         return b;
     return gcd(b % a, a);
@@ -128,20 +125,10 @@ lli gcdExtended(lli a, lli b, int* x, int* y)
 
 
 //Computes (a * b) mod c
-lli Mod_Mul(lli a, lli b, lli c)
-{
+lli Mod_Mul(lli a, lli b, lli c) {
 
     return ((a % c) * (b % c)) % c;
-    // lli res = 0;
-    // a = a % c;
-    /* while (b > 0)
-     {
-         if (b % 2 == 1)
-             res = (res + a) % c;
-         a = (a * 2) % c;
-         b /= 2;
-     }
-     return res % c;*/
+
 }
 
 lli Mod_Exp(lli base, lli exponent, lli mod) {
@@ -233,15 +220,15 @@ void From_ASCII(string infile, string outfile) {
         cout << "Error opening one of the files" << std::endl;
         return;
     }
+
     while (!inFile.eof()) {
         int a;
 
         inFile >> a;
         char charecter = a;
         outFile << charecter;
-        //outFile << endl;
-         //cout << a;
     }
+
     cout << "From_ASCII finished successfully" << std::endl;
     inFile.close();
     outFile.close();
@@ -263,7 +250,6 @@ void RSA_Encryption(string infile, string outfile, lli e, lli n) {
         lli c = Mod_Exp(m, e, n);
         outFile << c;
         outFile << endl;
-        //cout << a;
     }
     std::cout << "Encryption finished successfully" << std::endl;
     inFile.close();
@@ -285,9 +271,8 @@ void RSA_Decryption(string infile, string outfile, lli d, lli n) {
         lli m = Mod_Exp(c, d, n);
         outFile << m;
         outFile << endl;
-        //cout << a;
     }
-    std::cout << "Decryption finished successfully" << std::endl;
+   cout << "Decryption finished successfully" << endl;
     inFile.close();
     outFile.close();
 }
